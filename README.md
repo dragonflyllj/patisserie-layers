@@ -29,11 +29,38 @@ customers.** Three things must happen first. They are listed in full in
 
 ## Running it locally
 
+You need [Node.js](https://nodejs.org/) (LTS) and [Git](https://git-scm.com/).
+After installing either on Windows, open a **new** terminal — PATH only
+updates in new windows.
+
+**macOS / Linux**
+
 ```bash
+git clone https://github.com/dragonflyllj/patisserie-layers.git
+cd patisserie-layers
 npm install
 cp .env.example .env.local     # then fill in the values
 npm run dev                    # http://localhost:3000
 ```
+
+**Windows (Command Prompt)**
+
+```bat
+cd %USERPROFILE%\Documents
+git clone https://github.com/dragonflyllj/patisserie-layers.git
+cd patisserie-layers
+npm install
+copy .env.example .env.local
+npm run dev
+```
+
+Then open <http://localhost:3000>.
+
+Two Windows notes: `copy` is the equivalent of `cp`, and `#` does not start a
+comment in Command Prompt — so paste the commands without the trailing notes
+above. Work in your own folder (Documents, say), never in `C:\Windows\System32`.
+
+To edit the environment file on Windows: `notepad .env.local`
 
 | Command | What it does |
 | --- | --- |
