@@ -6,7 +6,22 @@
 // restart the dev server. Nothing else needs changing.
 
 /** Product photos found on disk, keyed by product ID. */
-export const PRODUCT_IMAGES: Record<string, string> = {};
+export const PRODUCT_IMAGES: Record<string, string> = {
+  "cheesecake-whole": "/products/cheesecake-whole.png",
+  "cookie-tin": "/products/cookie-tin.png",
+  "egg-tart-4": "/products/egg-tart-4.png",
+  "financier-8": "/products/financier-8.png",
+  "gateau-chocolat": "/products/gateau-chocolat.png",
+  "gift-box-assort": "/products/gift-box-assort.png",
+  "madeleine-8": "/products/madeleine-8.png",
+  "mont-blanc": "/products/mont-blanc.png",
+  "sable-diamant": "/products/sable-diamant.png",
+  "shortcake-whole": "/products/shortcake-whole.png"
+};
 
 /** Site imagery (hero, about page) found on disk, keyed by filename. */
-export const SITE_IMAGES: Record<string, string> = {};
+export const SITE_IMAGES: Record<string, string> = {
+  "about-interior": "/site/about-interior.png",
+  "about-layers": "/site/about-layers.png",
+  "hero": "/site/hero.png"
+};
