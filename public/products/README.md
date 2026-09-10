@@ -26,6 +26,8 @@ After adding files, restart the dev server (`npm run dev`). If you **replaced**
 a file while keeping the same name, also clear the image cache first, or the
 old picture will keep showing:
 
-```bat
-rmdir /s /q .next\cache\images
+```powershell
+Remove-Item -Recurse -Force .next\cache\images    # PowerShell
+rmdir /s /q .next\cache\images                    # Command Prompt
+rm -rf .next/cache/images                          # macOS / Linux
 ```

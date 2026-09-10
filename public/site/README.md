@@ -14,4 +14,11 @@ photo's brightness — but a busy or very dark image on the left side will still
 fight the text. Something calm with open space on the left works best.
 
 After adding files, restart the dev server. If you replaced a file while
-keeping the same name, clear `.next/cache/images` first.
+keeping the same name, clear the optimised-image cache first, or the old
+picture keeps showing:
+
+```powershell
+Remove-Item -Recurse -Force .next\cache\images    # PowerShell
+rmdir /s /q .next\cache\images                    # Command Prompt
+rm -rf .next/cache/images                          # macOS / Linux
+```

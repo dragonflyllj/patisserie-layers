@@ -43,10 +43,12 @@ cp .env.example .env.local     # then fill in the values
 npm run dev                    # http://localhost:3000
 ```
 
-**Windows (Command Prompt)**
+**Windows**
 
-```bat
-cd %USERPROFILE%\Documents
+Works in both PowerShell and Command Prompt:
+
+```powershell
+cd $HOME\Documents          # Command Prompt: cd %USERPROFILE%\Documents
 git clone https://github.com/dragonflyllj/patisserie-layers.git
 cd patisserie-layers
 npm install
@@ -56,9 +58,13 @@ npm run dev
 
 Then open <http://localhost:3000>.
 
-Two Windows notes: `copy` is the equivalent of `cp`, and `#` does not start a
-comment in Command Prompt — so paste the commands without the trailing notes
-above. Work in your own folder (Documents, say), never in `C:\Windows\System32`.
+Three Windows notes. `copy` is the equivalent of `cp`. `#` does not start a
+comment in Command Prompt, so paste commands without any trailing notes. And
+work in your own folder (Documents, say), never in `C:\Windows\System32`.
+
+PowerShell and Command Prompt are **not** interchangeable — a `PS >` prompt
+means PowerShell, where cmd-style switches such as `/s /q` are rejected. Where
+the two differ, both are given below.
 
 To edit the environment file on Windows: `notepad .env.local`
 
@@ -238,11 +244,14 @@ version of each image on disk, keyed by its path. Overwrite `egg-tart-4.jpg`
 with a different picture and the old one will keep appearing until you clear
 that cache:
 
+```powershell
+Remove-Item -Recurse -Force .next\cache\images    # Windows PowerShell
+```
 ```bat
-rmdir /s /q .next\cache\images
+rmdir /s /q .next\cache\images                    :: Windows Command Prompt
 ```
 ```bash
-rm -rf .next/cache/images   # macOS / Linux
+rm -rf .next/cache/images                          # macOS / Linux
 ```
 
 Then restart. This bites exactly when swapping placeholder photos for real
