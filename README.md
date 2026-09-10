@@ -212,12 +212,41 @@ tests/                         Pricing engine tests (`npm test`)
 | Accepted payment methods | `PAYMENT_TYPES` in `lib/komoju.ts` |
 | Colours and fonts | `@theme` block in `app/globals.css` |
 
-### Adding product photos
+### Adding photos
 
-Products currently render a tinted placeholder carrying the item's Latin name.
-To use a real photo: drop a square JPEG at `public/products/<id>.jpg` and set
-that product's `image` to `/products/<id>.jpg` in `lib/products.ts`. Nothing
-else needs to change.
+Adding a photo is one action: **drop the file in the right folder.** There is
+no code to edit.
+
+| Folder | Filename | Result |
+| --- | --- | --- |
+| `public/products/` | the product's ID, e.g. `egg-tart-4.jpg` | Shown for that product |
+| `public/site/` | `hero.jpg` | Home page hero background |
+| `public/site/` | `about-layers.jpg`, `about-interior.jpg` | Images on the about page |
+
+Each folder has a README listing every filename it accepts. `scripts/scan-images.mjs`
+scans both folders before `npm run dev` and `npm run build` and writes
+`lib/images.generated.ts`, which the components read.
+
+Anything without a file keeps its placeholder, so a partial set is fine — you
+can add photos one at a time as they are shot.
+
+Product images are displayed in a square frame and cropped to fill, so square
+originals work best. Around 1200×1200 is plenty; Next.js resizes per screen.
+
+**⚠️ Replacing a photo with the same filename:** Next.js caches the *optimised*
+version of each image on disk, keyed by its path. Overwrite `egg-tart-4.jpg`
+with a different picture and the old one will keep appearing until you clear
+that cache:
+
+```bat
+rmdir /s /q .next\cache\images
+```
+```bash
+rm -rf .next/cache/images   # macOS / Linux
+```
+
+Then restart. This bites exactly when swapping placeholder photos for real
+ones, which is the most likely time you'll hit it.
 
 ---
 
@@ -265,7 +294,10 @@ storage fixes it.
 - [ ] Replace the catalog in `lib/products.ts` with your real lineup and prices
 - [ ] Check allergen declarations on every product against your recipes
 - [ ] Replace shipping rates in `lib/shipping.ts` with your courier's actual rates
-- [ ] Add product photography
+- [ ] Replace the AI-generated placeholder photos with real photography of
+      your actual products (see [Adding photos](#adding-photos)) — **required
+      before taking real orders**, since photos of items customers receive
+      must show the real thing (景品表示法)
 
 **Technical**
 - [ ] Replace the order store in `lib/orders.ts` with a database
@@ -291,6 +323,14 @@ shopping flow in a real browser — add to cart, badge count, persistence across
 reload, live shipping recalculation by region, and a valid order reaching the
 payment step; no horizontal overflow at 320/390/640px.
 
+The image pipeline was exercised end to end with temporary stand-in files
+(added, picked up by the scan, rendered on every page, then removed), so
+dropping real photos in is a proven path.
+
 **Not verified:** any live KOMOJU API call; any live Instagram API call; the
 shop's real address, hours and phone number, which came from public listings
 rather than from the business.
+
+**Note on the placeholder photos:** the generated pastry images are stand-ins
+for design purposes. They are not photographs of this shop's products and must
+be replaced before the shop takes real orders.

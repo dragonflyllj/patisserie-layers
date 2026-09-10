@@ -6,11 +6,13 @@
  * JavaScript beyond the header's cart badge.
  */
 
+import Image from "next/image";
 import Link from "next/link";
 import { ProductCard } from "@/components/ProductCard";
 import { InstagramFeed } from "@/components/InstagramFeed";
 import { getFeaturedProducts } from "@/lib/products";
 import { SHOP } from "@/lib/shop";
+import { SITE_IMAGES } from "@/lib/images.generated";
 
 /**
  * The three points of the shop's story, shown under the hero.
@@ -34,6 +36,11 @@ const CONCEPT_POINTS = [
 export default function HomePage() {
   const featured = getFeaturedProducts();
 
+  // Drop a wide image at public/site/hero.jpg to use a photographic hero.
+  // Without one, the CSS treatment below is used instead — it is a complete
+  // design in its own right, not a broken state.
+  const heroImage = SITE_IMAGES["hero"] ?? null;
+
   return (
     <>
       {/* ── Hero ──────────────────────────────────────────────────────── */}
@@ -43,22 +50,49 @@ export default function HomePage() {
           the shop's name (layers) and to the cross-section of a folded pastry.
           Drawn in CSS so the hero needs no image and renders instantly.
         */}
-        <div
-          aria-hidden
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg,#F3EADD 0%,#EFE2D1 38%,#EADBC6 62%,#FAF7F2 100%)",
-          }}
-        />
-        <div
-          aria-hidden
-          className="absolute inset-x-0 bottom-0 h-1/2 opacity-45"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(180deg, rgba(168,118,62,0.16) 0px, rgba(168,118,62,0.16) 1px, transparent 1px, transparent 13px)",
-          }}
-        />
+        {heroImage ? (
+          <>
+            <Image
+              src={heroImage}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+              // Decorative: the headline beside it carries the meaning, so an
+              // empty alt keeps screen readers from announcing it twice.
+              aria-hidden
+            />
+            {/*
+              Scrim. The headline sits on top of a photograph whose brightness
+              we cannot predict, so this guarantees text contrast regardless of
+              which image is dropped in.
+            */}
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-r from-cream via-cream/85 to-cream/40"
+            />
+          </>
+        ) : (
+          <>
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg,#F3EADD 0%,#EFE2D1 38%,#EADBC6 62%,#FAF7F2 100%)",
+              }}
+            />
+            <div
+              aria-hidden
+              className="absolute inset-x-0 bottom-0 h-1/2 opacity-45"
+              style={{
+                backgroundImage:
+                  "repeating-linear-gradient(180deg, rgba(168,118,62,0.16) 0px, rgba(168,118,62,0.16) 1px, transparent 1px, transparent 13px)",
+              }}
+            />
+          </>
+        )}
 
         <div className="relative mx-auto max-w-6xl px-5 py-28 sm:py-36">
           <p className="eyebrow">Tokyo · Toritsu-Kasei</p>

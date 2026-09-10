@@ -1,15 +1,22 @@
 /**
  * Product imagery, with a designed fallback.
  *
- * Real photography is not in the repository yet, so a product whose `image`
- * is null renders a warm tonal placeholder carrying its Latin name instead of
- * a broken image or a grey box. Drop a square JPEG at
- * `public/products/<id>.jpg`, point `image` at it in lib/products.ts, and the
- * photo replaces the placeholder with no other changes.
+ * A product with no photo renders a warm tonal placeholder carrying its Latin
+ * name, rather than a broken image or a grey box.
+ *
+ * Photos are resolved in two steps:
+ *   1. An explicit `image` path set on the product in lib/products.ts, if any.
+ *   2. Otherwise a file matching the product's ID in `public/products/`,
+ *      discovered at build time by scripts/scan-images.mjs.
+ *
+ * Step 2 is the normal route: drop `public/products/egg-tart-4.jpg` in and
+ * restart, and it appears. No code change, and a product with no file yet
+ * simply keeps its placeholder — so a partial set of photos is fine.
  */
 
 import Image from "next/image";
 import type { Product } from "@/lib/products";
+import { PRODUCT_IMAGES } from "@/lib/images.generated";
 
 /**
  * Pairs of background tones used to tint placeholders.
@@ -56,11 +63,14 @@ export function ProductImage({
   priority = false,
   sizes = "(max-width: 768px) 100vw, 33vw",
 }: Props) {
-  if (product.image) {
+  // Explicit override first, then whatever the build-time scan found on disk.
+  const src = product.image ?? PRODUCT_IMAGES[product.id] ?? null;
+
+  if (src) {
     return (
       <div className={`relative overflow-hidden bg-line/40 ${className}`}>
         <Image
-          src={product.image}
+          src={src}
           alt={product.name}
           fill
           sizes={sizes}

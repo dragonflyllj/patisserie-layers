@@ -7,13 +7,44 @@
  */
 
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { SHOP } from "@/lib/shop";
+import { SITE_IMAGES } from "@/lib/images.generated";
 
 export const metadata: Metadata = {
   title: "レイヤーズについて",
   description: SHOP.description,
 };
+
+/**
+ * Renders a photo between sections when one has been added, and nothing at all
+ * when it hasn't — so the page reads as intentional either way.
+ *
+ * @param name - Filename (without extension) under public/site/.
+ * @param caption - Short caption shown beneath the image.
+ */
+function AboutFigure({ name, caption }: { name: string; caption: string }) {
+  const src = SITE_IMAGES[name];
+  if (!src) return null;
+
+  return (
+    <figure className="my-14 -mx-5 sm:mx-0">
+      <div className="relative aspect-[3/2] overflow-hidden sm:rounded-sm bg-line/40">
+        <Image
+          src={src}
+          alt={caption}
+          fill
+          sizes="(max-width: 768px) 100vw, 768px"
+          className="object-cover"
+        />
+      </div>
+      <figcaption className="text-xs text-muted mt-3 px-5 sm:px-0">
+        {caption}
+      </figcaption>
+    </figure>
+  );
+}
 
 export default function AboutPage() {
   return (
@@ -41,6 +72,11 @@ export default function AboutPage() {
           その積み重ねを、そのまま名前にしました。
         </p>
 
+        <AboutFigure
+          name="about-layers"
+          caption="折り込んだ生地の断面。層の数だけ、火の入り方が変わります。"
+        />
+
         <h2 className="font-display text-xl text-ink pt-4">つくり方のこと</h2>
         <p>
           生菓子は、その日に売り切れる量だけを仕込みます。
@@ -55,6 +91,11 @@ export default function AboutPage() {
           相手のもとに届いた日に、いちばんいい状態になるように——
           そこから逆算して、配合と焼成を決めています。
         </p>
+
+        <AboutFigure
+          name="about-interior"
+          caption="都立家政の商店街の一角、1階の小さな店です。"
+        />
 
         <h2 className="font-display text-xl text-ink pt-4">
           オンラインショップについて
