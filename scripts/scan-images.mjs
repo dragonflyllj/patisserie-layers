@@ -31,6 +31,31 @@ import { join, extname, basename } from "node:path";
 const EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif"]);
 
 /**
+ * Strips image extensions from a filename, repeatedly.
+ *
+ * Windows File Explorer hides known extensions by default, so renaming
+ * `hero.png` to `hero.jpg` in the GUI silently produces `hero.jpg.png`. The
+ * intent is unambiguous, so rather than rejecting the file we strip every
+ * trailing image extension and use the name underneath.
+ *
+ * Only image extensions are stripped, so a genuinely dotted name such as
+ * `my.product.jpg` still resolves to `my.product`.
+ *
+ * @param {string} file - The filename, e.g. "hero.jpg.png".
+ * @returns {string} The key, e.g. "hero".
+ */
+function stripImageExtensions(file) {
+  let name = file;
+  // Bounded loop: two doubled extensions is already pathological.
+  for (let i = 0; i < 3; i += 1) {
+    const ext = extname(name).toLowerCase();
+    if (!EXTENSIONS.has(ext)) break;
+    name = basename(name, extname(name));
+  }
+  return name;
+}
+
+/**
  * Lists usable images in a public/ subfolder, keyed by filename without
  * extension.
  *
@@ -51,7 +76,7 @@ function scan(folder) {
     const ext = extname(file).toLowerCase();
     if (!EXTENSIONS.has(ext)) continue;
 
-    const key = basename(file, extname(file));
+    const key = stripImageExtensions(file);
     // First match wins, so a .jpg and a .webp of the same name are not
     // ambiguous — the alphabetically first extension is used.
     if (!(key in found)) found[key] = `/${folder}/${file}`;
@@ -84,6 +109,19 @@ const site = scan("site");
 // the count above looks correct while nothing actually appears on the site.
 const productIds = readProductIds();
 const knownSiteNames = ["hero", "about-layers", "about-interior"];
+
+// Files that work but are named oddly — flag them for tidying, not as errors.
+const doubled = [...Object.values(products), ...Object.values(site)].filter((path) =>
+  /\.(jpe?g|png|webp|avif)\.(jpe?g|png|webp|avif)$/i.test(path),
+);
+if (doubled.length > 0) {
+  console.log(
+    `[scan-images] note: ${doubled.length} file(s) have a doubled extension ` +
+      `(e.g. "hero.jpg.png") — these still work, but you can tidy them with:\n` +
+      `              Get-ChildItem public\\products, public\\site -Filter *.jpg.png | ` +
+      `Rename-Item -NewName { $_.Name -replace '\\.jpg\\.png$', '.png' }`,
+  );
+}
 
 const unmatchedProducts = Object.keys(products).filter((k) => !productIds.includes(k));
 const unmatchedSite = Object.keys(site).filter((k) => !knownSiteNames.includes(k));
